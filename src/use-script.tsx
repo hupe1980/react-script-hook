@@ -11,6 +11,11 @@ export default function useScript({ src }: ScriptProps) {
   useEffect(() => {
     if (!isBrowser) return;
 
+    if (document.querySelector(`script[src="${src}"]`)) {
+      setLoading(false);
+      return;
+    }
+
     const scriptEl = document.createElement('script');
     scriptEl.src = src;
 

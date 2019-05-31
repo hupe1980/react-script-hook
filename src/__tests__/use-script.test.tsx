@@ -1,26 +1,39 @@
-import React from 'react';
-import { configure, mount } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
+import { renderHook } from 'react-hooks-testing-library';
 
 import useScript from '../use-script';
 
-configure({
-  adapter: new Adapter()
-});
-
 describe('useScript', () => {
-  it('should append a script tag', () => {
-    function Component() {
-      useScript({ src: 'http://scriptsrc/' });
-      return <div />;
+  afterEach(() => {
+    const html = document.querySelector('html');
+    if (html) {
+      html.innerHTML = '';
     }
+  });
 
-    mount(<Component />);
+  it('should append a script tag', () => {
+    expect(document.querySelectorAll('script').length).toBe(0);
+
+    const { result } = renderHook(() =>
+      useScript({ src: 'http://scriptsrc/' })
+    );
+
+    expect(result.current.loading).toBeTruthy();
+    expect(result.current.error).toBeNull();
 
     const script = document.querySelector('script');
     expect(script).not.toBeNull();
     if (script) {
       expect(script.src).toEqual('http://scriptsrc/');
     }
+  });
+
+  it('should only renders a script one times', () => {
+    expect(document.querySelectorAll('script').length).toBe(0);
+
+    renderHook(() => useScript({ src: 'http://scriptsrc/' }));
+    expect(document.querySelectorAll('script').length).toBe(1);
+
+    renderHook(() => useScript({ src: 'http://scriptsrc/' }));
+    expect(document.querySelectorAll('script').length).toBe(1);
   });
 });
