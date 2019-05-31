@@ -1,10 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export interface ScriptProps {
-  src: HTMLScriptElement['src'];
-}
-
-export default function useScript({ src }: ScriptProps) {
+export default function useScript({ src, ...attributes }: HTMLScriptElement) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<ErrorEvent | null>(null);
 
@@ -18,6 +14,8 @@ export default function useScript({ src }: ScriptProps) {
 
     const scriptEl = document.createElement('script');
     scriptEl.src = src;
+
+    Object.keys(attributes).forEach(key => (scriptEl[key] = attributes[key]));
 
     const handleLoad = () => setLoading(false);
     const handleError = (error: ErrorEvent) => setError(error);
