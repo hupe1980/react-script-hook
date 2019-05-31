@@ -50,7 +50,7 @@ describe('useScript', () => {
     }
   });
 
-  it('should only renders a script one times', () => {
+  it('should render a script only once', () => {
     expect(document.querySelectorAll('script').length).toBe(0);
 
     renderHook(() => useScript({ src: 'http://scriptsrc/' }));
