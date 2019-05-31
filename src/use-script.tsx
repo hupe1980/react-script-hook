@@ -9,6 +9,8 @@ export default function useScript({ src }: ScriptProps) {
   const [error, setError] = useState<ErrorEvent | null>(null);
 
   useEffect(() => {
+    if (!isBrowser) return;
+
     const scriptEl = document.createElement('script');
     scriptEl.src = src;
 
@@ -31,3 +33,6 @@ export default function useScript({ src }: ScriptProps) {
     error
   };
 }
+
+const isBrowser =
+  typeof window !== 'undefined' && typeof window.document !== 'undefined';
