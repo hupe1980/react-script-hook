@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react';
 
-export default function useScript({ src, ...attributes }: HTMLScriptElement) {
+export interface ScriptProps {
+  src: HTMLScriptElement['src'];
+  [key: string]: any;
+}
+
+export default function useScript({ src, ...attributes }: ScriptProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<ErrorEvent | null>(null);
 
@@ -31,10 +36,7 @@ export default function useScript({ src, ...attributes }: HTMLScriptElement) {
     };
   }, [src]);
 
-  return {
-    loading,
-    error
-  };
+  return [loading, error];
 }
 
 const isBrowser =

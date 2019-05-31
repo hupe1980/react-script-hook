@@ -22,7 +22,7 @@ import useScript from 'react-script-hook';
 import MyCheckout from './my-checkout';
 
 function App() {
-  const { loading, error } = useScript({ src: 'https://js.stripe.com/v3/' });
+  const [loading, error] = useScript({ src: 'https://js.stripe.com/v3/' });
 
   if (loading) return <h3>Loading Stripe API...</h3>;
   if (error) return <h3>Failed to load Stripe API: {error.message}</h3>;

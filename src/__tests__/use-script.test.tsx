@@ -17,13 +17,36 @@ describe('useScript', () => {
       useScript({ src: 'http://scriptsrc/' })
     );
 
-    expect(result.current.loading).toBeTruthy();
-    expect(result.current.error).toBeNull();
+    const [loading, error] = result.current;
+
+    expect(loading).toBeTruthy();
+    expect(error).toBeNull();
 
     const script = document.querySelector('script');
     expect(script).not.toBeNull();
     if (script) {
       expect(script.src).toEqual('http://scriptsrc/');
+    }
+  });
+
+  it('should append a script tag with attributes', () => {
+    expect(document.querySelectorAll('script').length).toBe(0);
+
+    const { result } = renderHook(() =>
+      useScript({ src: 'http://scriptsrc/', 'data-test': 'test', async: true })
+    );
+
+    const [loading, error] = result.current;
+
+    expect(loading).toBeTruthy();
+    expect(error).toBeNull();
+
+    const script = document.querySelector('script');
+    expect(script).not.toBeNull();
+    if (script) {
+      expect(script.src).toEqual('http://scriptsrc/');
+      expect(script['data-test']).toEqual('test');
+      expect(script.async).toBeTruthy();
     }
   });
 
