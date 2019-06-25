@@ -5,9 +5,11 @@ export interface ScriptProps {
   [key: string]: any;
 }
 
-export default function useScript({ src, ...attributes }: ScriptProps) {
+type ErrorState = ErrorEvent | null
+
+export default function useScript({ src, ...attributes }: ScriptProps): [boolean, ErrorState] {
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<ErrorEvent | null>(null);
+  const [error, setError] = useState<ErrorState>(null);
 
   useEffect(() => {
     if (!isBrowser) return;
