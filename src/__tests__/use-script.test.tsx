@@ -1,9 +1,9 @@
-import { renderHook } from 'react-hooks-testing-library';
+import { renderHook } from '@testing-library/react-hooks';
 
 import useScript from '../use-script';
 
 describe('useScript', () => {
-  afterEach(() => {
+  beforeEach(() => {
     const html = document.querySelector('html');
     if (html) {
       html.innerHTML = '';
@@ -19,7 +19,7 @@ describe('useScript', () => {
 
     const [loading, error] = result.current;
 
-    expect(loading).toBeTruthy();
+    expect(loading).toBe(true);
     expect(error).toBeNull();
 
     const script = document.querySelector('script');
@@ -29,7 +29,7 @@ describe('useScript', () => {
     }
   });
 
-  it('should append a script tag with attributes', () => {
+  it('should append a script tag with attributes', async () => {
     expect(document.querySelectorAll('script').length).toBe(0);
 
     const { result } = renderHook(() =>
@@ -38,7 +38,7 @@ describe('useScript', () => {
 
     const [loading, error] = result.current;
 
-    expect(loading).toBeTruthy();
+    expect(loading).toBe(true);
     expect(error).toBeNull();
 
     const script = document.querySelector('script');
@@ -46,7 +46,7 @@ describe('useScript', () => {
     if (script) {
       expect(script.src).toEqual('http://scriptsrc/');
       expect(script['data-test']).toEqual('test');
-      expect(script.async).toBeTruthy();
+      expect(script.async).toBe(true);
     }
   });
 

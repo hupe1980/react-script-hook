@@ -37,6 +37,15 @@ function App() {
 export default App;
 ```
 
+## Use with callbacks
+
+```js
+useScript({ 
+  src: 'https://js.stripe.com/v3/',
+  onload: () = console.log('Script loaded!') 
+})
+``
+
 ## License
 
 [MIT](LICENSE)

@@ -1,6 +1,6 @@
 {
   "name": "react-script-hook",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "React hook to dynamically load an external script and know when its loaded",
   "keywords": [
     "react",
@@ -30,16 +30,19 @@
     "react-dom": "^16.8.6"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.13",
-    "@types/react": "^16.8.19",
+    "@testing-library/react-hooks": "^1.0.4",
+    "@types/jest": "^24.0.15",
+    "@types/react": "^16.8.22",
     "@types/react-dom": "^16.8.4",
     "jest": "^24.8.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-hooks-testing-library": "^0.5.0",
     "react-test-renderer": "^16.8.6",
     "rimraf": "^2.6.3",
     "ts-jest": "^24.0.2",
-    "typescript": "^3.5.1"
+    "typescript": "^3.5.2"
+  },
+  "dependencies": {
+    "react-is-mounted-hook": "^1.0.1"
   }
 }

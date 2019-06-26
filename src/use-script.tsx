@@ -1,13 +1,17 @@
 import { useState, useEffect } from 'react';
+import useIsMounted from 'react-is-mounted-hook';
 
 export interface ScriptProps {
   src: HTMLScriptElement['src'];
+  onload?: HTMLScriptElement['onload'];
+  onerror?: HTMLScriptElement['onerror'];
   [key: string]: any;
 }
 
 type ErrorState = ErrorEvent | null
 
 export default function useScript({ src, ...attributes }: ScriptProps): [boolean, ErrorState] {
+  const isMounted = useIsMounted();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<ErrorState>(null);
 
@@ -15,7 +19,9 @@ export default function useScript({ src, ...attributes }: ScriptProps): [boolean
     if (!isBrowser) return;
 
     if (document.querySelector(`script[src="${src}"]`)) {
-      setLoading(false);
+      if (isMounted()) {
+        setLoading(false);
+      }
       return;
     }
 
@@ -24,8 +30,16 @@ export default function useScript({ src, ...attributes }: ScriptProps): [boolean
 
     Object.keys(attributes).forEach(key => (scriptEl[key] = attributes[key]));
 
-    const handleLoad = () => setLoading(false);
-    const handleError = (error: ErrorEvent) => setError(error);
+    const handleLoad = () => {
+      if (isMounted()) {
+        setLoading(false);
+      }
+    };
+    const handleError = (error: ErrorEvent) => {
+      if (isMounted()) {
+        setError(error)
+      }
+    };
 
     scriptEl.addEventListener('load', handleLoad);
     scriptEl.addEventListener('error', handleError);
