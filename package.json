@@ -1,48 +1,62 @@
 {
-  "name": "react-script-hook",
-  "version": "1.0.8",
-  "description": "React hook to dynamically load an external script and know when its loaded",
-  "keywords": [
-    "react",
-    "hook",
-    "script",
-    "loader"
-  ],
-  "license": "MIT",
-  "author": "hello@webappsolutions.de",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/hupe1980/react-script-hook"
-  },
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
-  "files": [
-    "lib"
-  ],
-  "scripts": {
-    "build": "rimraf lib && tsc",
-    "build:watch": "rimraf lib && tsc -w",
-    "test": "jest",
-    "prepare": "npm run build"
-  },
-  "peerDependencies": {
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6"
-  },
-  "devDependencies": {
-    "@testing-library/react-hooks": "^1.0.4",
-    "@types/jest": "^24.0.15",
-    "@types/react": "^16.8.22",
-    "@types/react-dom": "^16.8.4",
-    "jest": "^24.8.0",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-test-renderer": "^16.8.6",
-    "rimraf": "^2.6.3",
-    "ts-jest": "^24.0.2",
-    "typescript": "^3.5.2"
-  },
-  "dependencies": {
-    "react-is-mounted-hook": "^1.0.1"
-  }
+    "name": "react-script-hook",
+    "version": "1.0.9",
+    "description": "React hook to dynamically load an external script and know when its loaded",
+    "keywords": [
+        "react",
+        "hook",
+        "script",
+        "loader"
+    ],
+    "license": "MIT",
+    "author": "hello@webappsolutions.de",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/hupe1980/react-script-hook"
+    },
+    "main": "lib/index.js",
+    "types": "lib/index.d.ts",
+    "files": [
+        "lib"
+    ],
+    "scripts": {
+        "build": "rimraf lib && tsc",
+        "build:watch": "rimraf lib && tsc -w",
+        "test": "jest",
+        "lint": "eslint '*/**/*.{js,ts,tsx}' --report-unused-disable-directives",
+        "prepare": "npm run build"
+    },
+    "peerDependencies": {
+        "react": "^16.8.6",
+        "react-dom": "^16.8.6"
+    },
+    "devDependencies": {
+        "@testing-library/react-hooks": "^1.0.4",
+        "@types/jest": "^24.0.15",
+        "@types/react": "^16.8.22",
+        "@types/react-dom": "^16.8.4",
+        "@typescript-eslint/eslint-plugin": "^1.11.0",
+        "@typescript-eslint/parser": "^1.11.0",
+        "babel-eslint": "^10.0.2",
+        "eslint": "^5.16.0",
+        "eslint-config-prettier": "^6.0.0",
+        "eslint-config-react-app": "^4.0.1",
+        "eslint-plugin-flowtype": "^3.11.1",
+        "eslint-plugin-import": "^2.18.0",
+        "eslint-plugin-jsx-a11y": "^6.2.1",
+        "eslint-plugin-prettier": "^3.1.0",
+        "eslint-plugin-react": "^7.14.2",
+        "eslint-plugin-react-hooks": "^1.6.1",
+        "jest": "^24.8.0",
+        "prettier": "^1.18.2",
+        "react": "^16.8.6",
+        "react-dom": "^16.8.6",
+        "react-test-renderer": "^16.8.6",
+        "rimraf": "^2.6.3",
+        "ts-jest": "^24.0.2",
+        "typescript": "^3.5.2"
+    },
+    "dependencies": {
+        "react-is-mounted-hook": "^1.0.1"
+    }
 }
