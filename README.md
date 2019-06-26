@@ -44,7 +44,7 @@ useScript({
   src: 'https://js.stripe.com/v3/',
   onload: () = console.log('Script loaded!') 
 })
-``
+```
 
 ## License
 
