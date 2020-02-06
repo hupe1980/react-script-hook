@@ -42,7 +42,7 @@ export default App;
 ```js
 useScript({ 
   src: 'https://js.stripe.com/v3/',
-  onload: () = console.log('Script loaded!') 
+  onload: () => console.log('Script loaded!') 
 })
 ```
 
