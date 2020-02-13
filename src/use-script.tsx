@@ -29,10 +29,10 @@ export default function useScript({
         }
 
         const scriptEl = document.createElement('script');
-        scriptEl.src = src;
+        scriptEl.setAttribute('src', src);
 
-        Object.keys(attributes).forEach(
-            key => (scriptEl[key] = attributes[key]),
+        Object.keys(attributes).forEach(key =>
+            scriptEl.setAttribute(key, attributes[key]),
         );
 
         const handleLoad = () => {

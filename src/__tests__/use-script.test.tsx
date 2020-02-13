@@ -25,7 +25,7 @@ describe('useScript', () => {
         const script = document.querySelector('script');
         expect(script).not.toBeNull();
         if (script) {
-            expect(script.src).toEqual('http://scriptsrc/');
+            expect(script.getAttribute('src')).toEqual('http://scriptsrc/');
         }
     });
 
@@ -48,9 +48,9 @@ describe('useScript', () => {
         const script = document.querySelector('script');
         expect(script).not.toBeNull();
         if (script) {
-            expect(script.src).toEqual('http://scriptsrc/');
-            expect(script['data-test']).toEqual('test');
-            expect(script.async).toBe(true);
+            expect(script.getAttribute('src')).toEqual('http://scriptsrc/');
+            expect(script.getAttribute('data-test')).toEqual('test');
+            expect(script.getAttribute('async')).toBe('true');
         }
     });
 
