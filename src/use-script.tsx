@@ -31,9 +31,13 @@ export default function useScript({
         const scriptEl = document.createElement('script');
         scriptEl.setAttribute('src', src);
 
-        Object.keys(attributes).forEach(key =>
-            scriptEl.setAttribute(key, attributes[key]),
-        );
+        Object.keys(attributes).forEach(key => {
+            if (scriptEl[key] === undefined) {
+                scriptEl.setAttribute(key, attributes[key]);
+            } else {
+                scriptEl[key] = attributes[key];
+            }
+        });
 
         const handleLoad = () => {
             if (isMounted()) {
