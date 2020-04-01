@@ -31,7 +31,7 @@ export default function useScript({
         const scriptEl = document.createElement('script');
         scriptEl.setAttribute('src', src);
 
-        Object.keys(attributes).forEach(key => {
+        Object.keys(attributes).forEach((key) => {
             if (scriptEl[key] === undefined) {
                 scriptEl.setAttribute(key, attributes[key]);
             } else {
