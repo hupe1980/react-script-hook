@@ -1,10 +1,7 @@
 import { useState, useEffect } from 'react';
-import useIsMounted from 'react-is-mounted-hook';
 
 export interface ScriptProps {
     src: HTMLScriptElement['src'];
-    onload?: HTMLScriptElement['onload'];
-    onerror?: HTMLScriptElement['onerror'];
     [key: string]: any;
 }
 
@@ -14,19 +11,11 @@ export default function useScript({
     src,
     ...attributes
 }: ScriptProps): [boolean, ErrorState] {
-    const isMounted = useIsMounted();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<ErrorState>(null);
 
     useEffect(() => {
         if (!isBrowser) return;
-
-        if (document.querySelector(`script[src="${src}"]`)) {
-            if (isMounted()) {
-                setLoading(false);
-            }
-            return;
-        }
 
         const scriptEl = document.createElement('script');
         scriptEl.setAttribute('src', src);
@@ -40,14 +29,10 @@ export default function useScript({
         });
 
         const handleLoad = () => {
-            if (isMounted()) {
-                setLoading(false);
-            }
+            setLoading(false);
         };
         const handleError = (error: ErrorEvent) => {
-            if (isMounted()) {
-                setError(error);
-            }
+            setError(error);
         };
 
         scriptEl.addEventListener('load', handleLoad);
@@ -59,7 +44,9 @@ export default function useScript({
             scriptEl.removeEventListener('load', handleLoad);
             scriptEl.removeEventListener('error', handleError);
         };
-    }, [src, attributes, isMounted]);
+        // we need to ignore the attributes as they're a new object per call, so we'd never skip an effect call
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [src]);
 
     return [loading, error];
 }
