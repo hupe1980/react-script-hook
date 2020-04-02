@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react-hooks';
+import { act, renderHook } from '@testing-library/react-hooks';
 
 import useScript from '../use-script';
 
@@ -57,10 +57,51 @@ describe('useScript', () => {
     it('should render a script only once', () => {
         expect(document.querySelectorAll('script').length).toBe(0);
 
-        renderHook(() => useScript({ src: 'http://scriptsrc/' }));
+        const props = { src: 'http://scriptsrc/' };
+        const handle = renderHook((p) => useScript(p), {
+            initialProps: props,
+        });
         expect(document.querySelectorAll('script').length).toBe(1);
 
-        renderHook(() => useScript({ src: 'http://scriptsrc/' }));
+        handle.rerender();
         expect(document.querySelectorAll('script').length).toBe(1);
+    });
+
+    it('should set loading false on load', async () => {
+        const props = { src: 'http://scriptsrc/' };
+        const handle = renderHook((p) => useScript(p), {
+            initialProps: props,
+        });
+
+        const [loading, error] = handle.result.current;
+        expect(loading).toBe(true);
+        expect(error).toBe(null);
+
+        act(() => {
+            const el = document.querySelector('script');
+            if (el) {
+                el.dispatchEvent(new Event('load'));
+            }
+        });
+
+        const [loadingAfter, errorAfter] = handle.result.current;
+        expect(loadingAfter).toBe(false);
+        expect(errorAfter).toBe(null);
+    });
+
+    it('should not cause issues on unmount', async () => {
+        const props = { src: 'http://scriptsrc/' };
+        const handle = renderHook((p) => useScript(p), {
+            initialProps: props,
+        });
+
+        handle.unmount();
+
+        act(() => {
+            const el = document.querySelector('script');
+            if (el) {
+                el.dispatchEvent(new Event('load'));
+            }
+        });
     });
 });
