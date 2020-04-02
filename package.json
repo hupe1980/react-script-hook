@@ -1,6 +1,6 @@
 {
     "name": "react-script-hook",
-    "version": "1.0.16",
+    "version": "1.0.17",
     "description": "React hook to dynamically load an external script and know when its loaded",
     "keywords": [
         "react",
@@ -9,7 +9,6 @@
         "loader"
     ],
     "license": "MIT",
-    "author": "hello@webappsolutions.de",
     "repository": {
         "type": "git",
         "url": "https://github.com/hupe1980/react-script-hook"
