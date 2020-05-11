@@ -104,4 +104,42 @@ describe('useScript', () => {
             }
         });
     });
+
+    it('should check for script existing on the page before rendering when checkForExisting is true', () => {
+        expect(document.querySelectorAll('script').length).toBe(0);
+
+        const previousScript = document.createElement('script');
+        previousScript.src = 'http://scriptsrc/';
+        document.body.appendChild(previousScript);
+
+        expect(document.querySelectorAll('script').length).toBe(1);
+
+        const props = { src: 'http://scriptsrc/', checkForExisting: true };
+        const handle = renderHook((p) => useScript(p), {
+            initialProps: props,
+        });
+        expect(document.querySelectorAll('script').length).toBe(1);
+
+        handle.rerender();
+        expect(document.querySelectorAll('script').length).toBe(1);
+    });
+
+    it('should not check for script existing on the page before rendering when checkForExisting is not set', () => {
+        expect(document.querySelectorAll('script').length).toBe(0);
+
+        const previousScript = document.createElement('script');
+        previousScript.src = 'http://scriptsrc/';
+        document.body.appendChild(previousScript);
+
+        expect(document.querySelectorAll('script').length).toBe(1);
+
+        const props = { src: 'http://scriptsrc/' };
+        const handle = renderHook((p) => useScript(p), {
+            initialProps: props,
+        });
+        expect(document.querySelectorAll('script').length).toBe(2);
+
+        handle.rerender();
+        expect(document.querySelectorAll('script').length).toBe(2);
+    });
 });

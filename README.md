@@ -46,6 +46,20 @@ useScript({
 })
 ```
 
+## Check for Existing
+
+If you're in an environment where the script may have already been loaded, pass
+the `checkForExisting` flag to ensure the script is only placed on the page
+once by querying for script tags with the same src. Useful for SSR or SPAs with
+client-side routing.
+
+```js
+const [loading, error] = useScript({ 
+  src: 'https://js.stripe.com/v3/',
+  checkForExisting(true);
+})
+```
+
 ## License
 
 [MIT](LICENSE)
