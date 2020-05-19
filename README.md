@@ -56,7 +56,7 @@ client-side routing.
 ```js
 const [loading, error] = useScript({ 
   src: 'https://js.stripe.com/v3/',
-  checkForExisting(true);
+  checkForExisting: true
 })
 ```
 
