@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 export interface ScriptProps {
-    src: HTMLScriptElement['src'];
+    src: HTMLScriptElement['src'] | null;
     checkForExisting?: Boolean;
     [key: string]: any;
 }
@@ -13,11 +13,11 @@ export default function useScript({
     checkForExisting = false,
     ...attributes
 }: ScriptProps): [boolean, ErrorState] {
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(Boolean(src));
     const [error, setError] = useState<ErrorState>(null);
 
     useEffect(() => {
-        if (!isBrowser) return;
+        if (!isBrowser || !src) return;
 
         if (checkForExisting) {
             const existing = document.querySelectorAll(`script[src="${src}"]`);
