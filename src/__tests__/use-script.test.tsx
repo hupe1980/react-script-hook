@@ -142,4 +142,17 @@ describe('useScript', () => {
         handle.rerender();
         expect(document.querySelectorAll('script').length).toBe(2);
     });
+
+    it('should handle null src and not append a script tag', () => {
+        expect(document.querySelectorAll('script').length).toBe(0);
+
+        const { result } = renderHook(() => useScript({ src: null }));
+
+        const [loading, error] = result.current;
+
+        expect(loading).toBe(false);
+        expect(error).toBeNull();
+
+        expect(document.querySelectorAll('script').length).toBe(0);
+    });
 });
