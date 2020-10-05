@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 export interface ScriptProps {
-    src: HTMLScriptElement['src'];
+    src: HTMLScriptElement['src'] | null;
     checkForExisting?: Boolean;
     [key: string]: any;
 }
