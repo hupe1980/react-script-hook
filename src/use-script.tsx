@@ -17,7 +17,7 @@ export default function useScript({
     const [error, setError] = useState<ErrorState>(null);
 
     useEffect(() => {
-        if (!isBrowser) return;
+        if (!isBrowser || !src) return;
 
         if (checkForExisting) {
             const existing = document.querySelectorAll(`script[src="${src}"]`);
