@@ -155,4 +155,20 @@ describe('useScript', () => {
 
         expect(document.querySelectorAll('script').length).toBe(0);
     });
+
+    it('should NOT set loading to true if checkForExisting finds the script', () => {
+        expect(document.querySelectorAll('script').length).toBe(0);
+
+        const previousScript = document.createElement('script');
+        previousScript.src = 'http://scriptsrc/';
+        document.body.appendChild(previousScript);
+
+        expect(document.querySelectorAll('script').length).toBe(1);
+
+        const props = { src: 'http://scriptsrc/', checkForExisting: true };
+        const { result } = renderHook(() => useScript(props));
+        const [loading] = result.all[0] as Array<any>;
+        expect(loading).toEqual(false);
+        expect(document.querySelectorAll('script').length).toBe(1);
+    });
 });

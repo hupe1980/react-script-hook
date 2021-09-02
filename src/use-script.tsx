@@ -13,7 +13,8 @@ export default function useScript({
     checkForExisting = false,
     ...attributes
 }: ScriptProps): [boolean, ErrorState] {
-    const [loading, setLoading] = useState(Boolean(src));
+    const initialLoadingState = checkForExisting ? false : Boolean(src);
+    const [loading, setLoading] = useState(initialLoadingState);
     const [error, setError] = useState<ErrorState>(null);
 
     useEffect(() => {
@@ -24,6 +25,8 @@ export default function useScript({
             if (existing.length > 0) {
                 setLoading(false);
                 return;
+            } else {
+                setLoading(true);
             }
         }
 
