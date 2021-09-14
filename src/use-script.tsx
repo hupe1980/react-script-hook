@@ -20,15 +20,16 @@ export default function useScript({
         if (!isBrowser || !src) return;
 
         if (checkForExisting) {
-            const existing = document.querySelectorAll(`script[src="${src}"]`);
-            if (existing.length > 0) {
-                setLoading(false);
+            const existing = document.querySelector(`script[src="${src}"]`);
+            if (existing) {
+                setLoading(existing.getAttribute('data-status') === 'loading');
                 return;
             }
         }
 
         const scriptEl = document.createElement('script');
         scriptEl.setAttribute('src', src);
+        scriptEl.setAttribute('data-status', 'loading');
 
         Object.keys(attributes).forEach((key) => {
             if (scriptEl[key] === undefined) {
@@ -39,9 +40,11 @@ export default function useScript({
         });
 
         const handleLoad = () => {
+            scriptEl.setAttribute('data-status', 'ready');
             setLoading(false);
         };
         const handleError = (error: ErrorEvent) => {
+            scriptEl.setAttribute('data-status', 'error');
             setError(error);
         };
 

@@ -77,16 +77,17 @@ describe('useScript', () => {
         expect(loading).toBe(true);
         expect(error).toBe(null);
 
+        const el = document.querySelector('script');
+        expect(el).toBeDefined();
+        expect(el!.getAttribute('data-status')).toBe('loading');
         act(() => {
-            const el = document.querySelector('script');
-            if (el) {
-                el.dispatchEvent(new Event('load'));
-            }
+            el!.dispatchEvent(new Event('load'));
         });
 
         const [loadingAfter, errorAfter] = handle.result.current;
         expect(loadingAfter).toBe(false);
         expect(errorAfter).toBe(null);
+        expect(el!.getAttribute('data-status')).toBe('ready');
     });
 
     it('should not cause issues on unmount', async () => {
@@ -154,5 +155,27 @@ describe('useScript', () => {
         expect(error).toBeNull();
 
         expect(document.querySelectorAll('script').length).toBe(0);
+    });
+
+    it('should the loading status set to false after complete loading an existing script tag', () => {
+        expect(document.querySelectorAll('script').length).toBe(0);
+
+        const props = { src: 'http://scriptsrc/' };
+        const handle = renderHook((p) => useScript(p), {
+            initialProps: props,
+        });
+        const elBefore = document.querySelector(`script[src="${props.src}"]`);
+        expect(elBefore).toBeDefined();
+        expect(elBefore!.getAttribute('data-status')).toBe('loading');
+
+        handle.rerender();
+
+        const elAfter = document.querySelector(`script[src="${props.src}"]`);
+        expect(elAfter).toBeDefined();
+        expect(elAfter!.getAttribute('data-status')).toBe('loading');
+        act(() => {
+            elAfter!.dispatchEvent(new Event('load'));
+        });
+        expect(elAfter!.getAttribute('data-status')).toBe('ready');
     });
 });
