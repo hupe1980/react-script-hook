@@ -24,7 +24,25 @@ export default function useScript({
     checkForExisting = false,
     ...attributes
 }: ScriptProps): [boolean, ErrorState] {
+    // Check whether some instance of this hook considered this src.
     let status: ScriptStatus | undefined = src ? scripts[src] : undefined;
+
+    // If requested, check for existing <script> tags with this src
+    // (unless we've already loaded the script ourselves).
+    if (!status && checkForExisting && src) {
+        const existing: HTMLScriptElement | null =
+            document.querySelector(`script[src="${src}"]`);
+        if (existing) {
+            // Assume existing <script> tag is already loaded,
+            // and cache that data for future use.
+            status = scripts[src] = {
+                loading: false,
+                error: null,
+                scriptEl: existing,
+            };
+        }
+    }
+
     const [loading, setLoading] = useState<boolean>(
         status ? status.loading : Boolean(src));
     const [error, setError] = useState<ErrorState>(
@@ -34,24 +52,6 @@ export default function useScript({
         // Nothing to do on server, or if no src specified, or
         // if loading has already resolved to "loaded" or "error" state.
         if (!isBrowser || !src || !loading || error) return;
-
-        // If requested, check for existing <script> tags with this src
-        // (unless we've already loaded the script ourselves).
-        if (!status && checkForExisting) {
-            const existing: HTMLScriptElement | null =
-                document.querySelector(`script[src="${src}"]`);
-            if (existing) {
-                // Assume existing <script> tag is already loaded,
-                // and cache that data for future use.
-                scripts[src] = {
-                    loading: false,
-                    error: null,
-                    scriptEl: existing,
-                };
-                setLoading(false);
-                return;
-            }
-        }
 
         // Determine or create <script> element to listen to.
         let scriptEl: HTMLScriptElement;

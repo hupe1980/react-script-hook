@@ -178,9 +178,17 @@ describe('useScript', () => {
         expect(document.querySelectorAll('script').length).toBe(1);
 
         const props = { src: 'http://scriptsrc/', checkForExisting: true };
-        const handle = renderHook((p) => useScript(p), {
-            initialProps: props,
-        });
+        const handle = renderHook(
+            (p) => {
+                // Check that state is immediately "loaded"
+                const result = useScript(p);
+                expect(result).toStrictEqual([false, null]);
+                return result;
+            },
+            {
+                initialProps: props,
+            },
+        );
         expect(document.querySelectorAll('script').length).toBe(1);
         expect(handle.result.current).toStrictEqual([false, null]);
 
