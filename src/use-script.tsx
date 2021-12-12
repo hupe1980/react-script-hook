@@ -2,49 +2,88 @@ import { useState, useEffect } from 'react';
 
 export interface ScriptProps {
     src: HTMLScriptElement['src'] | null;
-    checkForExisting?: Boolean;
+    checkForExisting?: boolean;
     [key: string]: any;
 }
 
 type ErrorState = ErrorEvent | null;
+type ScriptStatus = {
+    loading: boolean;
+    error: ErrorState;
+    scriptEl: HTMLScriptElement;
+};
+type ScriptStatusMap = {
+    [key: string]: ScriptStatus;
+};
+
+// Previously loading/loaded scripts and their current status
+export const scripts: ScriptStatusMap = {};
 
 export default function useScript({
     src,
     checkForExisting = false,
     ...attributes
 }: ScriptProps): [boolean, ErrorState] {
-    const [loading, setLoading] = useState(Boolean(src));
-    const [error, setError] = useState<ErrorState>(null);
+    let status: ScriptStatus | undefined = src ? scripts[src] : undefined;
+    const [loading, setLoading] = useState<boolean>(
+        status ? status.loading : Boolean(src));
+    const [error, setError] = useState<ErrorState>(
+        status ? status.error : null);
 
     useEffect(() => {
-        if (!isBrowser || !src) return;
+        // Nothing to do on server, or if no src specified, or
+        // if loading has already resolved to "loaded" or "error" state.
+        if (!isBrowser || !src || !loading || error) return;
 
-        if (checkForExisting) {
-            const existing = document.querySelector(`script[src="${src}"]`);
+        // If requested, check for existing <script> tags with this src
+        // (unless we've already loaded the script ourselves).
+        if (!status && checkForExisting) {
+            const existing: HTMLScriptElement | null =
+                document.querySelector(`script[src="${src}"]`);
             if (existing) {
-                setLoading(existing.getAttribute('data-status') === 'loading');
+                // Assume existing <script> tag is already loaded,
+                // and cache that data for future use.
+                scripts[src] = {
+                    loading: false,
+                    error: null,
+                    scriptEl: existing,
+                };
+                setLoading(false);
                 return;
             }
         }
 
-        const scriptEl = document.createElement('script');
-        scriptEl.setAttribute('src', src);
-        scriptEl.setAttribute('data-status', 'loading');
+        // Determine or create <script> element to listen to.
+        let scriptEl: HTMLScriptElement;
+        if (status) {
+            scriptEl = status.scriptEl;
+        } else {
+            scriptEl = document.createElement('script');
+            scriptEl.src = src;
 
-        Object.keys(attributes).forEach((key) => {
-            if (scriptEl[key] === undefined) {
-                scriptEl.setAttribute(key, attributes[key]);
-            } else {
-                scriptEl[key] = attributes[key];
-            }
-        });
+            Object.keys(attributes).forEach((key) => {
+                if (scriptEl[key] === undefined) {
+                    scriptEl.setAttribute(key, attributes[key]);
+                } else {
+                    scriptEl[key] = attributes[key];
+                }
+            });
+
+            status = scripts[src] = {
+                loading: true,
+                error: null,
+                scriptEl: scriptEl,
+            };
+        }
+        // `status` is now guaranteed to be defined: either the old status
+        // from a previous load, or a newly created one.
 
         const handleLoad = () => {
-            scriptEl.setAttribute('data-status', 'ready');
+            if (status) status.loading = false;
             setLoading(false);
         };
         const handleError = (error: ErrorEvent) => {
-            scriptEl.setAttribute('data-status', 'error');
+            if (status) status.error = error;
             setError(error);
         };
 
