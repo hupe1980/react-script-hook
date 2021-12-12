@@ -30,8 +30,9 @@ export default function useScript({
     // If requested, check for existing <script> tags with this src
     // (unless we've already loaded the script ourselves).
     if (!status && checkForExisting && src) {
-        const existing: HTMLScriptElement | null =
-            document.querySelector(`script[src="${src}"]`);
+        const existing: HTMLScriptElement | null = document.querySelector(
+            `script[src="${src}"]`,
+        );
         if (existing) {
             // Assume existing <script> tag is already loaded,
             // and cache that data for future use.
@@ -44,9 +45,11 @@ export default function useScript({
     }
 
     const [loading, setLoading] = useState<boolean>(
-        status ? status.loading : Boolean(src));
+        status ? status.loading : Boolean(src),
+    );
     const [error, setError] = useState<ErrorState>(
-        status ? status.error : null);
+        status ? status.error : null,
+    );
 
     useEffect(() => {
         // Nothing to do on server, or if no src specified, or
@@ -69,6 +72,7 @@ export default function useScript({
                 }
             });
 
+            // eslint-disable-next-line react-hooks/exhaustive-deps
             status = scripts[src] = {
                 loading: true,
                 error: null,
@@ -97,7 +101,6 @@ export default function useScript({
             scriptEl.removeEventListener('error', handleError);
         };
         // we need to ignore the attributes as they're a new object per call, so we'd never skip an effect call
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [src]);
 
     return [loading, error];
