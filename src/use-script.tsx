@@ -29,7 +29,7 @@ export default function useScript({
 
     // If requested, check for existing <script> tags with this src
     // (unless we've already loaded the script ourselves).
-    if (!status && checkForExisting && src) {
+    if (!status && checkForExisting && src && isBrowser) {
         const existing: HTMLScriptElement | null = document.querySelector(
             `script[src="${src}"]`,
         );
