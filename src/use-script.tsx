@@ -28,11 +28,11 @@ const checkExisting = (src: string): ScriptStatus | undefined => {
     if (existing) {
         // Assume existing <script> tag is already loaded,
         // and cache that data for future use.
-        return scripts[src] = {
+        return (scripts[src] = {
             loading: false,
             error: null,
             scriptEl: existing,
-        };
+        });
     }
     return undefined;
 };
@@ -65,6 +65,7 @@ export default function useScript({
 
         // Check again for existing <script> tags with this src
         // in case it's changed since mount.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         status = scripts[src];
         if (!status && checkForExisting) {
             status = checkExisting(src);
@@ -86,7 +87,6 @@ export default function useScript({
                 }
             });
 
-            // eslint-disable-next-line react-hooks/exhaustive-deps
             status = scripts[src] = {
                 loading: true,
                 error: null,

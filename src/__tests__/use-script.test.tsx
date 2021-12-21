@@ -93,12 +93,15 @@ describe('useScript', () => {
         expect(document.querySelectorAll('script').length).toBe(0);
 
         const props = { src: 'http://scriptsrc/' };
-        const handle = renderHook((p) => {
-            useScript(p);
-            useScript(p);
-        }, {
-            initialProps: props,
-        });
+        const handle = renderHook(
+            (p) => {
+                useScript(p);
+                useScript(p);
+            },
+            {
+                initialProps: props,
+            },
+        );
 
         expect(document.querySelectorAll('script').length).toBe(1);
         handle.rerender();
