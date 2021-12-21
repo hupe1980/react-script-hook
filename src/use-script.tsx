@@ -19,6 +19,24 @@ type ScriptStatusMap = {
 // Previously loading/loaded scripts and their current status
 export const scripts: ScriptStatusMap = {};
 
+// Check for existing <script> tags with this src. If so, update scripts[src]
+// and return the new status; otherwise, return undefined.
+const checkExisting = (src: string): ScriptStatus | undefined => {
+    const existing: HTMLScriptElement | null = document.querySelector(
+        `script[src="${src}"]`,
+    );
+    if (existing) {
+        // Assume existing <script> tag is already loaded,
+        // and cache that data for future use.
+        return scripts[src] = {
+            loading: false,
+            error: null,
+            scriptEl: existing,
+        };
+    }
+    return undefined;
+};
+
 export default function useScript({
     src,
     checkForExisting = false,
@@ -30,18 +48,7 @@ export default function useScript({
     // If requested, check for existing <script> tags with this src
     // (unless we've already loaded the script ourselves).
     if (!status && checkForExisting && src && isBrowser) {
-        const existing: HTMLScriptElement | null = document.querySelector(
-            `script[src="${src}"]`,
-        );
-        if (existing) {
-            // Assume existing <script> tag is already loaded,
-            // and cache that data for future use.
-            status = scripts[src] = {
-                loading: false,
-                error: null,
-                scriptEl: existing,
-            };
-        }
+        status = checkExisting(src);
     }
 
     const [loading, setLoading] = useState<boolean>(
@@ -55,6 +62,13 @@ export default function useScript({
         // Nothing to do on server, or if no src specified, or
         // if loading has already resolved to "loaded" or "error" state.
         if (!isBrowser || !src || !loading || error) return;
+
+        // Check again for existing <script> tags with this src
+        // in case it's changed since mount.
+        status = scripts[src];
+        if (!status && checkForExisting) {
+            status = checkExisting(src);
+        }
 
         // Determine or create <script> element to listen to.
         let scriptEl: HTMLScriptElement;

@@ -89,6 +89,22 @@ describe('useScript', () => {
         expect(document.querySelectorAll('script').length).toBe(1);
     });
 
+    it('should render a script only once, multiple hooks in same component', () => {
+        expect(document.querySelectorAll('script').length).toBe(0);
+
+        const props = { src: 'http://scriptsrc/' };
+        const handle = renderHook((p) => {
+            useScript(p);
+            useScript(p);
+        }, {
+            initialProps: props,
+        });
+
+        expect(document.querySelectorAll('script').length).toBe(1);
+        handle.rerender();
+        expect(document.querySelectorAll('script').length).toBe(1);
+    });
+
     it('should set loading false on load', async () => {
         const props = { src: 'http://scriptsrc/' };
         const handle = renderHook((p) => useScript(p), {
