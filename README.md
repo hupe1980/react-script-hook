@@ -48,9 +48,15 @@ useScript({
 
 ## Check for Existing
 
-If you're in an environment where the script may have already been loaded, pass
-the `checkForExisting` flag to ensure the script is only placed on the page
-once by querying for script tags with the same src. Useful for SSR or SPAs with
+The hook automatically handles when the script was already loaded (or started
+loading) from another instance of the hook. So you can safely add identical
+`useScript` hooks to multiple components that depend on the same external
+script, and they will properly block on the loading of only one copy.
+
+If you're in an environment where the script may have already been loaded in
+some other way (not from this hook), pass an `checkForExisting` flag of `true`.
+In this case, the hook will ensure the script is placed on the page only once
+by querying for script tags with the same `src`. Useful for SSR or SPAs with
 client-side routing.
 
 ```js

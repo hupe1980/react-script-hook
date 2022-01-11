@@ -1,1 +1,1 @@
-export { default, ScriptProps } from './use-script';
+export { default, scripts, ScriptProps } from './use-script';

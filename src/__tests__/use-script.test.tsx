@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 
-import useScript from '../use-script';
+import useScript, { scripts } from '../use-script';
 
 describe('useScript', () => {
     beforeEach(() => {
@@ -8,6 +8,8 @@ describe('useScript', () => {
         if (html) {
             html.innerHTML = '';
         }
+        // Reset scripts status
+        Object.keys(scripts).forEach((key) => delete scripts[key]);
     });
 
     it('should append a script tag', () => {
@@ -54,7 +56,7 @@ describe('useScript', () => {
         }
     });
 
-    it('should render a script only once', () => {
+    it('should render a script only once, single hook', () => {
         expect(document.querySelectorAll('script').length).toBe(0);
 
         const props = { src: 'http://scriptsrc/' };
@@ -63,6 +65,45 @@ describe('useScript', () => {
         });
         expect(document.querySelectorAll('script').length).toBe(1);
 
+        handle.rerender();
+        expect(document.querySelectorAll('script').length).toBe(1);
+    });
+
+    it('should render a script only once, multiple hooks', () => {
+        expect(document.querySelectorAll('script').length).toBe(0);
+
+        const props = { src: 'http://scriptsrc/' };
+        const handle1 = renderHook((p) => useScript(p), {
+            initialProps: props,
+        });
+        const handle2 = renderHook((p) => useScript(p), {
+            initialProps: props,
+        });
+
+        expect(document.querySelectorAll('script').length).toBe(1);
+        handle2.rerender();
+        expect(document.querySelectorAll('script').length).toBe(1);
+        handle1.rerender();
+        expect(document.querySelectorAll('script').length).toBe(1);
+        handle2.rerender();
+        expect(document.querySelectorAll('script').length).toBe(1);
+    });
+
+    it('should render a script only once, multiple hooks in same component', () => {
+        expect(document.querySelectorAll('script').length).toBe(0);
+
+        const props = { src: 'http://scriptsrc/' };
+        const handle = renderHook(
+            (p) => {
+                useScript(p);
+                useScript(p);
+            },
+            {
+                initialProps: props,
+            },
+        );
+
+        expect(document.querySelectorAll('script').length).toBe(1);
         handle.rerender();
         expect(document.querySelectorAll('script').length).toBe(1);
     });
@@ -79,7 +120,6 @@ describe('useScript', () => {
 
         const el = document.querySelector('script');
         expect(el).toBeDefined();
-        expect(el!.getAttribute('data-status')).toBe('loading');
         act(() => {
             el!.dispatchEvent(new Event('load'));
         });
@@ -87,7 +127,48 @@ describe('useScript', () => {
         const [loadingAfter, errorAfter] = handle.result.current;
         expect(loadingAfter).toBe(false);
         expect(errorAfter).toBe(null);
-        expect(el!.getAttribute('data-status')).toBe('ready');
+    });
+
+    it('should set loading false on load, multiple hooks', async () => {
+        const props = { src: 'http://scriptsrc/' };
+        const handle1 = renderHook((p) => useScript(p), {
+            initialProps: props,
+        });
+        const handle2 = renderHook((p) => useScript(p), {
+            initialProps: props,
+        });
+
+        expect(handle1.result.current).toStrictEqual([true, null]);
+        expect(handle2.result.current).toStrictEqual([true, null]);
+
+        const el = document.querySelector('script');
+        expect(el).toBeDefined();
+        act(() => {
+            el!.dispatchEvent(new Event('load'));
+        });
+
+        expect(handle1.result.current).toStrictEqual([false, null]);
+        expect(handle2.result.current).toStrictEqual([false, null]);
+    });
+
+    it('should set loading true if previously loaded', async () => {
+        const props = { src: 'http://scriptsrc/' };
+        const handle1 = renderHook((p) => useScript(p), {
+            initialProps: props,
+        });
+        expect(handle1.result.current).toStrictEqual([true, null]);
+
+        const el = document.querySelector('script');
+        expect(el).toBeDefined();
+        act(() => {
+            el!.dispatchEvent(new Event('load'));
+        });
+        expect(handle1.result.current).toStrictEqual([false, null]);
+
+        const handle2 = renderHook((p) => useScript(p), {
+            initialProps: props,
+        });
+        expect(handle2.result.current).toStrictEqual([false, null]);
     });
 
     it('should not cause issues on unmount', async () => {
@@ -116,13 +197,23 @@ describe('useScript', () => {
         expect(document.querySelectorAll('script').length).toBe(1);
 
         const props = { src: 'http://scriptsrc/', checkForExisting: true };
-        const handle = renderHook((p) => useScript(p), {
-            initialProps: props,
-        });
+        const handle = renderHook(
+            (p) => {
+                // Check that state is immediately "loaded"
+                const result = useScript(p);
+                expect(result).toStrictEqual([false, null]);
+                return result;
+            },
+            {
+                initialProps: props,
+            },
+        );
         expect(document.querySelectorAll('script').length).toBe(1);
+        expect(handle.result.current).toStrictEqual([false, null]);
 
         handle.rerender();
         expect(document.querySelectorAll('script').length).toBe(1);
+        expect(handle.result.current).toStrictEqual([false, null]);
     });
 
     it('should not check for script existing on the page before rendering when checkForExisting is not set', () => {
@@ -155,27 +246,5 @@ describe('useScript', () => {
         expect(error).toBeNull();
 
         expect(document.querySelectorAll('script').length).toBe(0);
-    });
-
-    it('should the loading status set to false after complete loading an existing script tag', () => {
-        expect(document.querySelectorAll('script').length).toBe(0);
-
-        const props = { src: 'http://scriptsrc/' };
-        const handle = renderHook((p) => useScript(p), {
-            initialProps: props,
-        });
-        const elBefore = document.querySelector(`script[src="${props.src}"]`);
-        expect(elBefore).toBeDefined();
-        expect(elBefore!.getAttribute('data-status')).toBe('loading');
-
-        handle.rerender();
-
-        const elAfter = document.querySelector(`script[src="${props.src}"]`);
-        expect(elAfter).toBeDefined();
-        expect(elAfter!.getAttribute('data-status')).toBe('loading');
-        act(() => {
-            elAfter!.dispatchEvent(new Event('load'));
-        });
-        expect(elAfter!.getAttribute('data-status')).toBe('ready');
     });
 });
