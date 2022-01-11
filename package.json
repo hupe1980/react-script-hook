@@ -1,6 +1,6 @@
 {
     "name": "react-script-hook",
-    "version": "1.4.1",
+    "version": "1.6.0",
     "description": "React hook to dynamically load an external script and know when its loaded",
     "keywords": [
         "react",
@@ -22,7 +22,7 @@
         "build": "rimraf lib && tsc",
         "build:watch": "rimraf lib && tsc -w",
         "test": "jest",
-        "lint": "eslint */**/*.{js,ts,tsx} --report-unused-disable-directives",
+        "lint": "eslint '*/**/*.{js,ts,tsx}' --report-unused-disable-directives",
         "prepare": "npm run build"
     },
     "peerDependencies": {
