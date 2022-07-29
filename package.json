@@ -26,8 +26,8 @@
         "prepare": "npm run build"
     },
     "peerDependencies": {
-        "react": "^16.8.6 || ^17.0.0",
-        "react-dom": "^16.8.6 || ^17.0.0"
+        "react": "^16.8.6 || 17 - 18",
+        "react-dom": "^16.8.6 || 17 - 18"
     },
     "devDependencies": {
         "@testing-library/react-hooks": "^7.0.0",
