@@ -57,11 +57,13 @@ export default function useScript({
     const [error, setError] = useState<ErrorState>(
         status ? status.error : null,
     );
+    // Tracks if script is loaded so we can avoid duplicate script tags
+    const [scriptLoaded, setScriptLoaded] = useState<boolean>(false);
 
     useEffect(() => {
         // Nothing to do on server, or if no src specified, or
-        // if loading has already resolved to "loaded" or "error" state.
-        if (!isBrowser || !src || !loading || error) return;
+        // if script is already loaded or "error" state.
+        if (!isBrowser || !src || scriptLoaded || error) return;
 
         // Check again for existing <script> tags with this src
         // in case it's changed since mount.
@@ -99,6 +101,7 @@ export default function useScript({
         const handleLoad = () => {
             if (status) status.loading = false;
             setLoading(false);
+            setScriptLoaded(true);
         };
         const handleError = (error: ErrorEvent) => {
             if (status) status.error = error;

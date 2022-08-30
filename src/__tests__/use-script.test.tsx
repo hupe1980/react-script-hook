@@ -247,4 +247,26 @@ describe('useScript', () => {
 
         expect(document.querySelectorAll('script').length).toBe(0);
     });
+
+    it('should append script after src change from null', async () => {
+        expect(document.querySelectorAll('script').length).toBe(0);
+
+        const props = { src: null };
+        const { result, rerender, waitFor } = renderHook((p) => useScript(p), {
+            initialProps: props,
+        });
+
+        const [loading, error] = result.current;
+
+        expect(loading).toBe(false);
+        expect(error).toBeNull();
+
+        expect(document.querySelectorAll('script').length).toBe(0);
+
+        props.src = 'http://scriptsrc/' as any;
+        rerender(props);
+        await waitFor(() => {
+            expect(document.querySelectorAll('script').length).toBe(1);
+        });
+    });
 });
