@@ -24,7 +24,8 @@
         "test": "jest",
         "lint": "eslint '*/**/*.{js,ts,tsx}' --report-unused-disable-directives",
         "prepare": "npm run build",
-        "release": "release-it"
+        "release": "npm run prepare && release-it",
+        "auto-changelog": "auto-changelog"
     },
     "peerDependencies": {
         "react": "^16.8.6 || 17 - 18",
@@ -37,6 +38,7 @@
         "@types/react-dom": "^17.0.7",
         "@typescript-eslint/eslint-plugin": "^4.26.1",
         "@typescript-eslint/parser": "^4.26.1",
+        "auto-changelog": "^2.4.0",
         "babel-eslint": "^10.1.0",
         "eslint": "^7.28.0",
         "eslint-config-prettier": "^8.3.0",
