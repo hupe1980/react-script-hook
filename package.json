@@ -23,7 +23,8 @@
         "build:watch": "rimraf lib && tsc -w",
         "test": "jest",
         "lint": "eslint '*/**/*.{js,ts,tsx}' --report-unused-disable-directives",
-        "prepare": "npm run build"
+        "prepare": "npm run build",
+        "release": "release-it"
     },
     "peerDependencies": {
         "react": "^16.8.6 || 17 - 18",
@@ -51,6 +52,7 @@
         "react": "^17.0.1",
         "react-dom": "^17.0.1",
         "react-test-renderer": "^17.0.2",
+        "release-it": "^15.4.1",
         "rimraf": "^3.0.2",
         "ts-jest": "^27.0.3",
         "typescript": "^4.3.2"
