@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ComponentPropsWithoutRef } from 'react';
 
-export interface ScriptProps {
+type ScriptAttributes = Omit<ComponentPropsWithoutRef<'script'>, 'src'>;
+
+export interface ScriptProps extends ScriptAttributes {
     src: HTMLScriptElement['src'] | null;
     checkForExisting?: boolean;
-    [key: string]: any;
 }
 
 type ErrorState = ErrorEvent | null;
